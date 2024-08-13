@@ -43,9 +43,9 @@ Otaku API adalah API yang menyediakan data Anime, Donghua, Manga, Manhwa, dan Ma
 
 ## Dokumentasi
 
-Lihat dokumentasi lengkap API [![di sini](https://docs.otaku.us.kg)] untuk informasi lebih lanjut mengenai endpoint yang tersedia.
+Lihat dokumentasi lengkap API [di sini](https://docs.otaku.us.kg) untuk informasi lebih lanjut mengenai endpoint yang tersedia.
 
 ## Sumber
 
-- [![Kuramanime](https://kuramanime.boo)]
-- [![Mangakita](https://mangakita.id)]
+- [Kuramanime](https://kuramanime.boo)
+- [Mangakita](https://mangakita.id)
