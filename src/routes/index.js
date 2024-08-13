@@ -22,13 +22,13 @@ router.get("/anime/ongoing", getOngoingAnime);
 router.get("/anime/finished", getFinishedAnime);
 router.get("/anime/movie", getMovieAnime);
 router.get("/anime/search", getSearchAnime);
-router.get("/anime/:number/:id", getDetailAnime);
-router.get("/anime/:number/:id/episode/:episode", getEpisodeAnime);
+router.get("/anime/:anime_code/:anime_id", getDetailAnime);
+router.get("/anime/:anime_code/:anime_id/episode/:episode_number", getEpisodeAnime);
 router.get("/komik/manga", getMangaKomik);
 router.get("/komik/manhwa", getManhwaKomik);
 router.get("/komik/manhua", getManhuaKomik);
 router.get("/komik/search", getSearchKomik);
-router.get("/komik/:id", getDetailKomik);
-router.get("/komik/chapter/:id", getChapterKomik);
+router.get("/komik/:komik_id", getDetailKomik);
+router.get("/komik/chapter/:chapter_id", getChapterKomik);
 
 export default router;

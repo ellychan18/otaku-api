@@ -31,22 +31,27 @@ export const getOngoingAnime = (req, res) => {
         const title = $(e).find("div > h5").text().trim();
         const image = $(e).find("a > div").attr("data-setbg");
         const episode = $(e).find("a > div > div.ep > span").text().trim();
-        const id = $(e)
-          .find("div > a")
-          .attr("href")
-          ?.replace(baseURL, "")
-          .trim();
+        const anime_code = $(e).find("div > a").attr("href")?.split("/")[4];
+        const anime_id = $(e).find("div > a").attr("href")?.split("/")[5];
         const type = $(e)
           .find("div > ul > a")
           .map((i, e) => $(e).text().trim())
           .get();
 
-        if (title && image && episode && id && type.length > 0) {
+        if (
+          title &&
+          image &&
+          episode &&
+          anime_code &&
+          anime_id &&
+          type.length > 0
+        ) {
           data.push({
             title,
             image,
             episode,
-            id,
+            anime_code,
+            anime_id,
             type,
           });
         }
@@ -83,22 +88,27 @@ export const getFinishedAnime = (req, res) => {
         const title = $(e).find("div > h5").text().trim();
         const image = $(e).find("a > div").attr("data-setbg");
         const score = $(e).find("a > div > div.ep > span").text().trim();
-        const id = $(e)
-          .find("div > a")
-          .attr("href")
-          ?.replace(baseURL, "")
-          .trim();
+        const anime_code = $(e).find("div > a").attr("href")?.split("/")[4];
+        const anime_id = $(e).find("div > a").attr("href")?.split("/")[5];
         const type = $(e)
           .find("div > ul > a")
           .map((i, e) => $(e).text().trim())
           .get();
 
-        if (title && image && score && id && type.length > 0) {
+        if (
+          title &&
+          image &&
+          score &&
+          anime_code &&
+          anime_id &&
+          type.length > 0
+        ) {
           data.push({
             title,
             image,
             score,
-            id,
+            anime_code,
+            anime_id,
             type,
           });
         }
@@ -135,22 +145,27 @@ export const getMovieAnime = (req, res) => {
         const title = $(e).find("div > h5").text().trim();
         const image = $(e).find("a > div").attr("data-setbg");
         const score = $(e).find("a > div > div.ep > span").text().trim();
-        const id = $(e)
-          .find("div > a")
-          .attr("href")
-          ?.replace(baseURL, "")
-          .trim();
+        const anime_code = $(e).find("div > a").attr("href")?.split("/")[4];
+        const anime_id = $(e).find("div > a").attr("href")?.split("/")[5];
         const type = $(e)
           .find("div > ul > a")
           .map((i, e) => $(e).text().trim())
           .get();
 
-        if (title && image && score && id && type.length > 0) {
+        if (
+          title &&
+          image &&
+          score &&
+          anime_code &&
+          anime_id &&
+          type.length > 0
+        ) {
           data.push({
             title,
             image,
             score,
-            id,
+            anime_code,
+            anime_id,
             type,
           });
         }
@@ -195,22 +210,27 @@ export const getSearchAnime = (req, res) => {
         const title = $(e).find("div > h5").text().trim();
         const image = $(e).find("a > div").attr("data-setbg");
         const score = $(e).find("a > div > div.ep > span").text().trim();
-        const id = $(e)
-          .find("div > a")
-          .attr("href")
-          ?.replace(baseURL, "")
-          .trim();
+        const anime_code = $(e).find("div > a").attr("href")?.split("/")[4];
+        const anime_id = $(e).find("div > a").attr("href")?.split("/")[5];
         const type = $(e)
           .find("div > ul > a")
           .map((i, e) => $(e).text().trim())
           .get();
 
-        if (title && image && score && id && type.length > 0) {
+        if (
+          title &&
+          image &&
+          score &&
+          anime_code &&
+          anime_id &&
+          type.length > 0
+        ) {
           data.push({
             title,
             image,
             score,
-            id,
+            anime_code,
+            anime_id,
             type,
           });
         }
@@ -222,7 +242,7 @@ export const getSearchAnime = (req, res) => {
 };
 
 export const getDetailAnime = (req, res) => {
-  const { number, id } = req.params;
+  const { anime_code, anime_id } = req.params;
   let page = 1;
   const allEpisodes = new Map();
 
@@ -254,10 +274,13 @@ export const getDetailAnime = (req, res) => {
   function fetchPage(page) {
     return new Promise((resolve, reject) => {
       request(
-        `${baseURL}/anime/${number}/${id}?page=${page}`,
+        `${baseURL}/anime/${anime_code}/${anime_id}?page=${page}`,
         (error, response, body) => {
-          if (error || response.statusCode !== 200) {
-            return reject(error || new Error("Failed to fetch data"));
+          if (response.statusCode !== 200) {
+            return res.status(500).json({
+              status: false,
+              message: error,
+            });
           }
 
           const $ = cheerio.load(body);
@@ -366,12 +389,12 @@ export const getDetailAnime = (req, res) => {
           const $$ = cheerio.load(episodeContent);
 
           $$("a").each((i, e) => {
-            const episodeId = $$(e).attr("href").replace(baseURL, "").trim();
-            const episode = $$(e).text().trim();
-            if (episodeId && episode) {
-              allEpisodes.set(`${episodeId}_${episode}`, {
-                id: episodeId,
-                episode,
+            const episode_number = $$(e).attr("href")?.split("/")[7];
+            const title = $$(e).text().trim();
+            if (title && episode_number) {
+              allEpisodes.set(`${title}_${episode_number}`, {
+                title,
+                episode_number,
               });
             }
           });
@@ -402,64 +425,72 @@ export const getDetailAnime = (req, res) => {
     .catch((error) => {
       res.status(500).json({
         status: false,
-        message: error.message,
+        message: error,
       });
     });
 };
 
 export const getEpisodeAnime = (req, res) => {
-  const { number, id, episode } = req.params;
+  const { anime_code, anime_id, episode_number } = req.params;
   const servers = ["kuramadrive", "archive", "archive-v2"];
   const promises = servers.map((server) => {
     return new Promise((resolve, reject) => {
       request(
-        `${baseURL}/anime/${number}/${id}/episode/${episode}`,
+        `${baseURL}/anime/${anime_code}/${anime_id}/episode/${episode_number}`,
         (error, response, body) => {
-          if (error || response.statusCode !== 200) {
-            return reject(new Error("Failed to fetch episode data"));
+          if (response.statusCode !== 200) {
+            return res.status(500).json({
+              status: false,
+              message: error,
+            });
           }
 
           const getKps = cheerio.load(body);
           const kps = getKps("div.mt-3:nth-child(2)").attr("data-kps");
 
           request(`${baseURL}/assets/js/${kps}.js`, (error, response, body) => {
-            if (error || response.statusCode !== 200) {
-              return reject(new Error("Failed to fetch JS data"));
+            if (response.statusCode !== 200) {
+              return res.status(500).json({
+                status: false,
+                message: error,
+              });
             }
 
             const getData = extractData(body);
 
-            if (!getData) {
-              return reject(new Error("Failed to extract data from JS"));
-            }
-
             request(
               `${baseURL}/assets/${getData.MIX_AUTH_ROUTE_PARAM}`,
               (error, response, body) => {
-                if (error || response.statusCode !== 200) {
-                  return reject(new Error("Failed to fetch auth data"));
+                if (response.statusCode !== 200) {
+                  return res.status(500).json({
+                    status: false,
+                    message: error,
+                  });
                 }
 
                 const auth = body.trim();
 
                 request(
-                  `${baseURL}/anime/${number}/${id}/episode/${episode}?${getData.MIX_PAGE_TOKEN_KEY}=${auth}&${getData.MIX_STREAM_SERVER_KEY}=${server}`,
+                  `${baseURL}/anime/${anime_code}/${anime_id}/episode/${episode_number}?${getData.MIX_PAGE_TOKEN_KEY}=${auth}&${getData.MIX_STREAM_SERVER_KEY}=${server}`,
                   (error, response, body) => {
-                    if (error || response.statusCode !== 200) {
-                      return reject(new Error("Failed to fetch video data"));
+                    if (response.statusCode !== 200) {
+                      return res.status(500).json({
+                        status: false,
+                        message: error,
+                      });
                     }
 
                     const $ = cheerio.load(body);
                     const title = $("#episodeTitle").text().trim();
-                    const id = $(".center__nav")
+                    const anime_id = $(".center__nav")
                       .attr("href")
-                      .replace(baseURL, "");
-                    const prevEpisode = $(".before__nav.ep-button")
+                      ?.split("/")[5];
+                    const prev_episode_number = $(".before__nav.ep-button")
                       .attr("href")
-                      ?.replace(baseURL, "");
-                    const nextEpisode = $(".after__nav.ep-button")
+                      ?.split("/")[7];
+                    const next_episode_number = $(".after__nav.ep-button")
                       .attr("href")
-                      ?.replace(baseURL, "");
+                      ?.split("/")[7];
                     const videoList = $("#player > source")
                       .map((i, e) => ({
                         url: $(e).attr("src"),
@@ -468,7 +499,13 @@ export const getEpisodeAnime = (req, res) => {
                       }))
                       .get();
 
-                    resolve({ title, id, prevEpisode, nextEpisode, videoList });
+                    resolve({
+                      title,
+                      anime_id,
+                      prev_episode_number,
+                      next_episode_number,
+                      videoList,
+                    });
                   }
                 );
               }
@@ -483,21 +520,21 @@ export const getEpisodeAnime = (req, res) => {
     .then((results) => {
       const combinedVideoList = results.flatMap((result) => result.videoList);
       const title = results[0].title;
-      const id = results[0].id;
-      const prevEpisode = results[0].prevEpisode;
-      const nextEpisode = results[0].nextEpisode;
+      const anime_id = results[0].anime_id;
+      const prev_episode_number = results[0].prev_episode_number;
+      const next_episode_number = results[0].next_episode_number;
       res.json({
         title,
-        id,
-        prevEpisode,
-        nextEpisode,
+        anime_id,
+        prev_episode_number,
+        next_episode_number,
         videoList: combinedVideoList,
       });
     })
     .catch((error) => {
       res.status(500).json({
         status: false,
-        message: error.message,
+        message: error,
       });
     });
 };

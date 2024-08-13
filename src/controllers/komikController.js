@@ -30,7 +30,7 @@ export const getMangaKomik = (req, res) => {
         const chapter = $(e).find(".epxs").text().trim();
         const score = $(e).find(".numscore").text();
         const type = $(e).find("span.type").attr("class").split(" ").pop();
-        const id = $(e).find("a").attr("href").split("/")[4];
+        const komik_id = $(e).find("a").attr("href").split("/")[4];
 
         data.push({
           title,
@@ -38,7 +38,7 @@ export const getMangaKomik = (req, res) => {
           chapter,
           score,
           type,
-          id,
+          komik_id,
         });
       });
       res.json({
@@ -76,7 +76,7 @@ export const getManhwaKomik = (req, res) => {
         const chapter = $(e).find(".epxs").text().trim();
         const score = $(e).find(".numscore").text();
         const type = $(e).find("span.type").attr("class").split(" ").pop();
-        const id = $(e).find("a").attr("href").split("/")[4];
+        const komik_id = $(e).find("a").attr("href").split("/")[4];
 
         data.push({
           title,
@@ -84,7 +84,7 @@ export const getManhwaKomik = (req, res) => {
           chapter,
           score,
           type,
-          id,
+          komik_id,
         });
       });
       res.json({
@@ -122,7 +122,7 @@ export const getManhuaKomik = (req, res) => {
         const chapter = $(e).find(".epxs").text().trim();
         const score = $(e).find(".numscore").text();
         const type = $(e).find("span.type").attr("class").split(" ").pop();
-        const id = $(e).find("a").attr("href").split("/")[4];
+        const komik_id = $(e).find("a").attr("href").split("/")[4];
 
         data.push({
           title,
@@ -130,7 +130,7 @@ export const getManhuaKomik = (req, res) => {
           chapter,
           score,
           type,
-          id,
+          komik_id,
         });
       });
       res.json({
@@ -166,7 +166,7 @@ export const getSearchKomik = (req, res) => {
       const chapter = $(e).find(".epxs").text().trim();
       const score = $(e).find(".numscore").text();
       const type = $(e).find("span.type").attr("class").split(" ").pop();
-      const id = $(e).find("a").attr("href").split("/")[4];
+      const komik_id = $(e).find("a").attr("href").split("/")[4];
 
       data.push({
         title,
@@ -174,7 +174,7 @@ export const getSearchKomik = (req, res) => {
         chapter,
         score,
         type,
-        id,
+        komik_id,
       });
     });
     res.json({
@@ -186,9 +186,9 @@ export const getSearchKomik = (req, res) => {
 };
 
 export const getDetailKomik = (req, res) => {
-  const id = req.params.id;
+  const { komik_id } = req.params;
 
-  request(`${baseURL}/manga/${id}`, (error, response, body) => {
+  request(`${baseURL}/manga/${komik_id}`, (error, response, body) => {
     if (response.statusCode !== 200) {
       return res.status(500).json({
         status: false,
@@ -244,9 +244,9 @@ export const getDetailKomik = (req, res) => {
       .get();
     const chapterList = $("#chapterlist ul li")
       .map((i, e) => ({
-        id: $(e).find("a").attr("href")?.split("/")[3],
-        chapter: $(e).find(".chapternum").text(),
+        title: $(e).find(".chapternum").text(),
         date: $(e).find(".chapterdate").text(),
+        chapter_id: $(e).find("a").attr("href")?.split("/")[3],
       }))
       .get();
 
@@ -272,9 +272,9 @@ export const getDetailKomik = (req, res) => {
 };
 
 export const getChapterKomik = (req, res) => {
-  const id = req.params.id;
+  const { chapter_id } = req.params;
 
-  request(`${baseURL}/${id}`, (error, response, body) => {
+  request(`${baseURL}/${chapter_id}`, (error, response, body) => {
     if (response.statusCode !== 200) {
       return res.status(500).json({
         status: false,
@@ -288,17 +288,17 @@ export const getChapterKomik = (req, res) => {
     const data = JSON.parse(script.match(/ts_reader\.run\((\{.*?\})\);/)[1]);
 
     const title = $(".entry-title").text();
-    const komikId = $(".allc a").attr("href").split("/")[4];
-    const prevChapter = data.prevUrl.split("/")[3];
-    const nextChapter = data.nextUrl.split("/")[3];
+    const komik_id = $(".allc a").attr("href").split("/")[4];
+    const prev_chapter_id = data.prevUrl.split("/")[3];
+    const next_chapter_id = data.nextUrl.split("/")[3];
     const downloadUrl = $(".dlx a").attr("href");
     const images = data.sources[0].images;
 
     res.json({
       title,
-      komikId,
-      prevChapter,
-      nextChapter,
+      komik_id,
+      prev_chapter_id,
+      next_chapter_id,
       downloadUrl,
       images,
     });

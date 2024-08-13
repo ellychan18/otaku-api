@@ -10,17 +10,21 @@ middleware(app);
 app.use("/api", routes);
 
 app.get("/", (req, res) => {
-  res.send("Otaku API 🚀");
+  res.json({
+    status: true,
+    message: "Otaku API 🚀",
+    docs: "https://docs.otaku.us.kg",
+  });
 });
 
 app.use((req, res) => {
   res.status(404).json({
     status: false,
-    message:
-      "Not found! check docs here: https://github.com/FandyAhmadAzizi/otaku-api",
+    message: "Not found!",
+    docs: "https://docs.otaku.us.kg",
   });
 });
 
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+  console.log("Otaku API 🚀");
 });
