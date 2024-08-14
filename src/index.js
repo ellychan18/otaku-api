@@ -3,7 +3,7 @@ import middleware from "./utils/middleware.js";
 import routes from "./routes/index.js";
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8000;
 
 middleware(app);
 
