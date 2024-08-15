@@ -33,6 +33,7 @@ export const getOngoingAnime = (req, res) => {
         const episode = $(e).find("a > div > div.ep > span").text().trim();
         const anime_code = $(e).find("div > a").attr("href")?.split("/")[4];
         const anime_id = $(e).find("div > a").attr("href")?.split("/")[5];
+        const episode_number = $(e).find("div > a").attr("href")?.split("/")[7];
         const type = $(e)
           .find("div > ul > a")
           .map((i, e) => $(e).text().trim())
@@ -44,6 +45,7 @@ export const getOngoingAnime = (req, res) => {
           episode &&
           anime_code &&
           anime_id &&
+          episode_number &&
           type.length > 0
         ) {
           data.push({
@@ -52,6 +54,7 @@ export const getOngoingAnime = (req, res) => {
             episode,
             anime_code,
             anime_id,
+            episode_number,
             type,
           });
         }
@@ -482,6 +485,9 @@ export const getEpisodeAnime = (req, res) => {
 
                     const $ = cheerio.load(body);
                     const title = $("#episodeTitle").text().trim();
+                    const anime_code = $(".center__nav")
+                    .attr("href")
+                    ?.split("/")[4];
                     const anime_id = $(".center__nav")
                       .attr("href")
                       ?.split("/")[5];
@@ -501,6 +507,7 @@ export const getEpisodeAnime = (req, res) => {
 
                     resolve({
                       title,
+                      anime_code,
                       anime_id,
                       prev_episode_number,
                       next_episode_number,
@@ -520,11 +527,13 @@ export const getEpisodeAnime = (req, res) => {
     .then((results) => {
       const combinedVideoList = results.flatMap((result) => result.videoList);
       const title = results[0].title;
+      const anime_code = results[0].anime_code;
       const anime_id = results[0].anime_id;
       const prev_episode_number = results[0].prev_episode_number;
       const next_episode_number = results[0].next_episode_number;
       res.json({
         title,
+        anime_code,
         anime_id,
         prev_episode_number,
         next_episode_number,
