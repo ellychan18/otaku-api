@@ -244,6 +244,185 @@ export const getSearchAnime = (req, res) => {
   );
 };
 
+export const getScheduleAnime = (req, res) => {
+  const schedule_day = req.query.schedule_day || "all";
+  const page = req.query.page || 1;
+
+  request(
+    `${baseURL}/schedule?scheduled_day=${schedule_day}&page=${page}`,
+    (error, response, body) => {
+      if (response.statusCode !== 200) {
+        return res.status(500).json({
+          status: false,
+          message: error,
+        });
+      }
+
+      const $ = cheerio.load(body);
+      let data = [];
+
+      let prevPage =
+        $("a.gray__color .fa-angle-left").length > 0 ? false : true;
+      if (!$(".product__pagination").length) {
+        prevPage = false;
+      }
+
+      let nextPage =
+        $("a.gray__color .fa-angle-right").length > 0 ? false : true;
+      if (!$(".product__pagination").length) {
+        nextPage = false;
+      }
+
+      $("#animeList > div > div").each((i, e) => {
+        const title = $(e).find("div > h5").text().trim();
+        const image = $(e).find("a > div").attr("data-setbg");
+        const anime_code = $(e).find("div > a").attr("href")?.split("/")[4];
+        const anime_id = $(e).find("div > a").attr("href")?.split("/")[5];
+        const episode = $(e)
+          .find("a > div > div.ep > span:last-child")
+          .text()
+          .trim()
+          .replace("\n", " ");
+        const day = $(e)
+          .find("a > div > div.view-end > ul > li:nth-child(1) > span")
+          .text()
+          .trim();
+        const time = $(e)
+          .find("a > div > div.view-end > ul > li:nth-child(2) > span")
+          .text()
+          .trim();
+        const type = $(e)
+          .find("div > ul > a")
+          .map((i, e) => $(e).text().trim())
+          .get();
+
+        if (
+          title &&
+          image &&
+          anime_code &&
+          anime_id &&
+          episode &&
+          day &&
+          time &&
+          type.length > 0
+        ) {
+          data.push({
+            title,
+            image,
+            anime_code,
+            anime_id,
+            episode,
+            day,
+            time,
+            type,
+          });
+        }
+      });
+
+      res.json({ data, prevPage, nextPage });
+    }
+  );
+};
+
+export const getPropertiesList = (req, res) => {
+  const properties_type = req.params.properties_type;
+
+  request(
+    `${baseURL}/properties/${properties_type}`,
+    (error, response, body) => {
+      if (response.statusCode !== 200) {
+        return res.status(500).json({
+          status: false,
+          message: error,
+        });
+      }
+
+      const $ = cheerio.load(body);
+      const data = [];
+
+      $(".kuramanime__genres ul li").each((i, e) => {
+        const name = $(e).find("a").text();
+        const properties_id = $(e)
+          .find("a")
+          .attr("href")
+          .split("/")[5]
+          .split("?")[0];
+        data.push({
+          name,
+          properties_id,
+        });
+      });
+      res.json({ data });
+    }
+  );
+};
+
+export const getPropertiesAnimeList = (req, res) => {
+  const properties_type = req.params.properties_type;
+  const properties_id = req.params.properties_id;
+  const order_by = req.query.order_by || "updated";
+  const page = req.query.page || 1;
+
+  request(
+    `${baseURL}/properties/${properties_type}/${properties_id}?order_by=${order_by}&page=${page}`,
+    (error, response, body) => {
+      if (response.statusCode !== 200) {
+        return res.status(500).json({
+          status: false,
+          message: error,
+        });
+      }
+
+      const $ = cheerio.load(body);
+      const data = [];
+
+      let prevPage =
+        $("a.gray__color .fa-angle-left").length > 0 ? false : true;
+      if (!$(".product__pagination").length) {
+        prevPage = false;
+      }
+
+      let nextPage =
+        $("a.gray__color .fa-angle-right").length > 0 ? false : true;
+      if (!$(".product__pagination").length) {
+        nextPage = false;
+      }
+
+      $("#animeList > div > div").each((i, e) => {
+        const title = $(e).find("div > h5").text().trim();
+        const image = $(e).find("a > div").attr("data-setbg");
+        const score = $(e).find("a > div > div.ep > span").text().trim();
+        const anime_code = $(e).find("div > a").attr("href")?.split("/")[4];
+        const anime_id = $(e).find("div > a").attr("href")?.split("/")[5];
+        const type = $(e)
+          .find("div > ul > a")
+          .map((i, e) => $(e).text().trim())
+          .get();
+
+        if (
+          title &&
+          image &&
+          score &&
+          anime_code &&
+          anime_id &&
+          type.length > 0
+        ) {
+          data.push({
+            title,
+            image,
+            score,
+            anime_code,
+            anime_id,
+            type,
+          });
+        }
+      });
+
+      res.json({ data, prevPage, nextPage });
+    }
+  );
+};
+
 export const getDetailAnime = (req, res) => {
   const { anime_code, anime_id } = req.params;
   let page = 1;
@@ -486,8 +665,8 @@ export const getEpisodeAnime = (req, res) => {
                     const $ = cheerio.load(body);
                     const title = $("#episodeTitle").text().trim();
                     const anime_code = $(".center__nav")
-                    .attr("href")
-                    ?.split("/")[4];
+                      .attr("href")
+                      ?.split("/")[4];
                     const anime_id = $(".center__nav")
                       .attr("href")
                       ?.split("/")[5];

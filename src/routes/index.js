@@ -4,6 +4,9 @@ import {
   getFinishedAnime,
   getMovieAnime,
   getSearchAnime,
+  getScheduleAnime,
+  getPropertiesList,
+  getPropertiesAnimeList,
   getDetailAnime,
   getEpisodeAnime,
 } from "../controllers/animeController.js";
@@ -22,6 +25,9 @@ router.get("/anime/ongoing", getOngoingAnime);
 router.get("/anime/finished", getFinishedAnime);
 router.get("/anime/movie", getMovieAnime);
 router.get("/anime/search", getSearchAnime);
+router.get("/anime/schedule", getScheduleAnime);
+router.get("/anime/:properties_type", getPropertiesList);
+router.get("/anime/:properties_type/:properties_id", getPropertiesAnimeList);
 router.get("/anime/:anime_code/:anime_id", getDetailAnime);
 router.get("/anime/:anime_code/:anime_id/episode/:episode_number", getEpisodeAnime);
 router.get("/komik/manga", getMangaKomik);
