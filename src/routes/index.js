@@ -17,6 +17,8 @@ import {
   getSearchKomik,
   getDetailKomik,
   getChapterKomik,
+  getGenreList,
+  getGenreKomik,
 } from "../controllers/komikController.js";
 
 const router = express.Router();
@@ -34,6 +36,8 @@ router.get("/komik/manga", getMangaKomik);
 router.get("/komik/manhwa", getManhwaKomik);
 router.get("/komik/manhua", getManhuaKomik);
 router.get("/komik/search", getSearchKomik);
+router.get("/komik/genres", getGenreList);
+router.get("/komik/genre/:genre_id", getGenreKomik);
 router.get("/komik/:komik_id", getDetailKomik);
 router.get("/komik/chapter/:chapter_id", getChapterKomik);
 

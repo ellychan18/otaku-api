@@ -185,6 +185,78 @@ export const getSearchKomik = (req, res) => {
   });
 };
 
+export const getGenreList = (req, res) => {
+  request(`${baseURL}/daftar-manga/`, (error, response, body) => {
+    if (response.statusCode !== 200) {
+      return res.status(500).json({
+        status: false,
+        message: error,
+      });
+    }
+
+    const $ = cheerio.load(body);
+    const data = [];
+
+    $("div.filter:nth-child(1) ul li").each((i, e) => {
+      const name = $(e).text().trim();
+      const genre_id = $(e).find("input").attr("value");
+
+      data.push({
+        name,
+        genre_id,
+      });
+    });
+    res.json(data);
+  });
+};
+
+export const getGenreKomik = (req, res) => {
+  const { genre_id } = req.params;
+  const page = req.query.page || 1;
+  const order = req.query.order || "update";
+
+  request(
+    `${baseURL}/manga/?page=${page}&genre[]=${genre_id}&order=${order}`,
+    (error, response, body) => {
+      if (response.statusCode !== 200) {
+        return res.status(500).json({
+          status: false,
+          message: error,
+        });
+      }
+
+      const $ = cheerio.load(body);
+      const data = [];
+
+      const prevPage = $(".l").length > 0 || $(".prev").length > 0;
+      const nextPage = $(".r").length > 0 || $(".next").length > 0;
+
+      $(".listupd .bs").each((i, e) => {
+        const title = $(e).find("a").attr("title");
+        const image = $(e).find("img").attr("src");
+        const chapter = $(e).find(".epxs").text().trim();
+        const score = $(e).find(".numscore").text();
+        const type = $(e).find("span.type").attr("class").split(" ").pop();
+        const komik_id = $(e).find("a").attr("href").split("/")[4];
+
+        data.push({
+          title,
+          image,
+          chapter,
+          score,
+          type,
+          komik_id,
+        });
+      });
+      res.json({
+        data,
+        prevPage,
+        nextPage,
+      });
+    }
+  );
+};
+
 export const getDetailKomik = (req, res) => {
   const { komik_id } = req.params;
 
