@@ -47,5 +47,5 @@ Lihat dokumentasi lengkap API [di sini](https://docs.otaku.us.kg) untuk informas
 
 ## Sumber
 
-- [Kuramanime](https://kuramanime.boo)
+- [Kuramanime](https://kuramanime.dad)
 - [Mangakita](https://mangakita.id)
