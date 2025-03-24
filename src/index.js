@@ -13,7 +13,7 @@ app.get("/", (req, res) => {
   res.json({
     status: true,
     message: "Otaku API 🚀",
-    docs: "https://docs.otaku.us.kg",
+    docs: "https://otaku-api-seven.vercel.app",
   });
 });
 
@@ -21,7 +21,7 @@ app.use((req, res) => {
   res.status(404).json({
     status: false,
     message: "Not found!",
-    docs: "https://docs.otaku.us.kg",
+    docs: "https://otaku-api-seven.vercel.app",
   });
 });
 
